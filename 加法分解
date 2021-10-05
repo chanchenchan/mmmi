@@ -1,31 +1,41 @@
 #include <iostream>
-#include <cstdio>
 using namespace std;
-int hanoi(int n, char x, char y, char z);
-int num = 0;
-int main()
-{
-	int n;
-	printf("请输入汉诺塔的层数：");
-	cin >> n;
-	hanoi(n, 'A', 'B', 'C');
-	printf("共移动了 %d 次。\n", num);
+
+#define MAX 20
+
+// 因子暂存在res数组中
+int res[20];
+int p_res = 0;
+
+// 将n进行分解
+int resolve(int n, int min_factor = 1);
+
+int main() {
+	while (1) {
+		int n;
+		cin >> n;
+		cout << "total num of res:\t" << resolve(n) << endl;
+	}
 	return 0;
 }
-// n表示要将多少个"圆盘"从起始柱子A移动至目标柱子B
-// x表示起始柱子,y表示目标柱子,z表示过渡柱子
-int hanoi(int n, char x, char y, char z)
-{
-	if (n == 0)
-	{return 0;
+
+int resolve(int n, int min_factor) {
+	if (min_factor > n)
+		return 0;
+	if (min_factor == n) {
+		res[p_res] = min_factor;
+		p_res++;
+		for (int i = 0; i < p_res; i++)
+			cout << res[i] << " ";
+		cout << endl;
+		p_res--;
+		return 1;
 	}
-	else
-	{
-		hanoi(n - 1, x,z,y );// 递归处理,一开始的时候,先将n-1个盘子移至过渡柱z上
-		printf("第%d步：  将 %d 号圆盘从 %c 移至 %c \n", num + 1, n, x, y); // 然后再将最底下的大盘子直接移至目标柱子y
-		num++;
-		hanoi(n - 1, z, y, x); // 然后重复以上步骤,递归处理放在过渡柱z上的n-1个盘子,
-							   // 这时x已经为空，所以x被当成过渡柱了
-	}
-	
+	res[p_res] = min_factor;
+	p_res++;
+	int k = resolve(n - min_factor, min_factor);
+	p_res--;
+
+	int s = resolve(n, min_factor + 1);
+	return k + s;
 }
